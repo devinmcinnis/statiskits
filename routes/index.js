@@ -25,7 +25,7 @@ router.get('/', function(req, res, next) {
         var catEndTime = moment(new Date(parseInt(cat.end_time, 10)))
         cat.time_until_end = catEndTime.fromNow();
 
-        var endingWithin5Minutes = catEndTime.diff(timeNow, 'minutes') <= 5;
+        var endingWithin5Minutes = catEndTime.diff(timeNow, 'minutes') <= 30;
 
         if (endingWithin5Minutes) {
           cat.ending_soon = true;
@@ -39,9 +39,9 @@ router.get('/', function(req, res, next) {
         var catEndTime = moment(new Date(parseInt(cat.end_time, 10)))
         cat.time_until_end = catEndTime.fromNow();
 
-        var endingWithin5Minutes = catEndTime.diff(timeNow, 'minutes');
+        var endingWithin5Minutes = catEndTime.diff(timeNow, 'minutes') <= 30;
 
-        if (endingWithin5Minutes <= 5) {
+        if (endingWithin5Minutes) {
           cat.ending_soon = true;
         }
 
