@@ -1,0 +1,70 @@
+extends layout
+
+block content
+  script.
+    var firstSale = !{JSON.stringify(sale[0])};
+    var firstSire = !{JSON.stringify(sire[0])};
+
+    var cheapestSale = parseInt(firstSale.current_price, 10);
+    var cheapestSire = parseInt(firstSire.current_price, 10);
+
+    //- if (cheapestSire < 2000000000000000) {
+    //-   alert('Sire ' + firstSire.kitty.id);
+    //- }
+
+    if (cheapestSale < 4000000000000000) {
+      alert('Sale ' + firstSale.kitty.id);
+    }
+
+    setTimeout(function() {
+      window.location.reload();
+    }, 1000 * 60 * 2);
+
+  h1 Top 10 Cheapest for Sale
+
+  .kitties
+    each kitty in sale
+      - var kittyPrice = parseInt(kitty.current_price, 10) / 1000000000000000000
+      - var kittyTime = new Date(parseInt(kitty.end_time, 10));
+
+      .kitty
+        a(target="_blank" href='https://private.cryptokitties.co/kitty/' + kitty.kitty.id)
+          img(src=kitty.kitty.image_url)
+        div ETH
+          = ' '
+          span= kittyPrice.toFixed(4)
+        div Price $#{(kittyPrice * ethPrice).toFixed(2)}
+        div #{kittyTime.toLocaleTimeString()}
+
+  h1 Top 10 Cheapest End Price
+
+  .kitties
+    each kitty in sale
+      - var kittyPrice = parseInt(kitty.end_price, 10) / 1000000000000000000
+      - var kittyTime = new Date(parseInt(kitty.end_time, 10));
+
+      .kitty
+        a(target="_blank" href='https://private.cryptokitties.co/kitty/' + kitty.kitty.id)
+          img(src=kitty.kitty.image_url)
+        div ETH
+          = ' '
+          span= kittyPrice.toFixed(4)
+        div Price $#{(kittyPrice * ethPrice).toFixed(2)}
+        div #{kittyTime.toDateString()}
+        div #{kittyTime.toLocaleTimeString()}
+
+  h1 Top 10 Cheapest to Sire
+
+  .kitties
+    each kitty in sire
+      - var kittyPrice = parseInt(kitty.current_price, 10) / 1000000000000000000
+      - var kittyTime = new Date(parseInt(kitty.end_time, 10));
+
+      .kitty
+        a(target="_blank" href='https://private.cryptokitties.co/kitty/' + kitty.kitty.id)
+          img(src=kitty.kitty.image_url)
+        div ETH
+          = ' '
+          span= kittyPrice.toFixed(4)
+        div Price $#{(kittyPrice * ethPrice).toFixed(2)}
+        div #{kittyTime.toLocaleTimeString()}

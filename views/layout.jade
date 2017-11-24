@@ -1,0 +1,21 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+  body
+    div.nav
+      .nav-section
+        span.nav-title= title
+        a(href='/') Top 10s
+        = ' '
+        a(href='/sale') View all Sales
+        = ' '
+        a(href='/sire') View all Sires
+
+      .nav-section
+        span Last update #{lastUpdate.toLocaleTimeString()}
+        span.eth-price ETH$#{ethPrice.toFixed(2)}
+
+    .content
+      block content
