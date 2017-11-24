@@ -3,10 +3,10 @@ extends layout
 block content
 
   .section
-    h2 Top 10 About to End
+    h2 Sales About to End
 
     .kitties
-      each kitty in endTime
+      each kitty in saleEndSoon
         - var kittyPrice = parseInt(kitty.current_price, 10) / 1000000000000000000
 
         .kitty
@@ -20,7 +20,24 @@ block content
           div(class="#{kitty.ending_soon ? 'text-danger' : ''}") Ends #{kitty.time_until_end}
 
   .section
-    h2 Top 10 Most Expensive for Sale
+    h2 Sires About to End
+
+    .kitties
+      each kitty in sireEndSoon
+        - var kittyPrice = parseInt(kitty.current_price, 10) / 1000000000000000000
+
+        .kitty
+          a(target="_blank" href='https://private.cryptokitties.co/kitty/' + kitty.kitty.id)
+            img(src=kitty.kitty.image_url)
+          div= '#' + kitty.kitty.id
+          div ETH
+            = ' '
+            span= kittyPrice.toFixed(4)
+          div Price $#{(kittyPrice * ethPrice).toFixed(2)}
+          div(class="#{kitty.ending_soon ? 'text-danger' : ''}") Ends #{kitty.time_until_end}
+
+  .section
+    h2 Most Expensive for Sale
 
     .kitties
       each kitty in saleMost
@@ -37,7 +54,7 @@ block content
           div(class="#{kitty.ending_soon ? 'text-danger' : ''}") Ends #{kitty.time_until_end}
 
   .section
-    h2 Top 10 Least Expensive for Sale
+    h2 Least Expensive for Sale
 
     .kitties
       each kitty in saleLeast
@@ -54,7 +71,7 @@ block content
           div(class="#{kitty.ending_soon ? 'text-danger' : ''}") Ends #{kitty.time_until_end}
 
   .section
-    h2 Top 10 Most Expensive to Sire
+    h2 Most Expensive to Sire
 
     .kitties
       each kitty in sireMost
@@ -71,7 +88,7 @@ block content
           div(class="#{kitty.ending_soon ? 'text-danger' : ''}") Ends #{kitty.time_until_end}
 
   .section
-    h2 Top 10 Least Expensive to Sire
+    h2 Least Expensive to Sire
 
     .kitties
       each kitty in sireLeast
@@ -88,7 +105,7 @@ block content
           div(class="#{kitty.ending_soon ? 'text-danger' : ''}") Ends #{kitty.time_until_end}
 
   //- .section
-  //-   h2 Top 10 Cheapest End Price
+  //-   h2 Cheapest End Price
 
   //-   .kitties
   //-     each kitty in saleEndPrice

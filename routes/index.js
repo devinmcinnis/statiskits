@@ -56,6 +56,10 @@ router.get('/', function(req, res, next) {
         return a.current_price - b.current_price;
       }).slice(0, 10);
 
+      var saleEndSoon = saleAuctions.sort(function(a, b) {
+        return a.end_time - b.end_time;
+      }).slice(0, 10);
+
       var saleEndPrice = saleAuctions.sort(function(a, b) {
         return a.end_price - b.end_price;
       }).slice(0, 10);
@@ -68,17 +72,18 @@ router.get('/', function(req, res, next) {
         return a.current_price - b.current_price;
       }).slice(0, 10);
 
-      var endTime = sireAuctions.sort(function(a, b) {
+      var sireEndSoon = sireAuctions.sort(function(a, b) {
         return a.end_time - b.end_time;
       }).slice(0, 10);
 
       res.render('index', {
         ethPrice: ethPrice,
-        endTime: endTime,
         lastUpdate: new Date(),
+        saleEndSoon: saleEndSoon,
         saleLeast: saleLeast,
         saleMost: saleMost,
         saleEndPrice: saleEndPrice,
+        sireEndSoon: sireEndSoon,
         sireLeast: sireLeast,
         sireMost: sireMost,
         title: 'Top 10s'
