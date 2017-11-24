@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
+var moment = require('moment');
 
 var ethPrice = 520;
 
@@ -18,29 +19,68 @@ router.get('/', function(req, res, next) {
 
   request('https://api.cryptokitties.co/auctions?offset=&limit=1000&type=sale&status=open', function(err, respSale) {
     request('https://api.cryptokitties.co/auctions?offset=&limit=1000&type=sire&status=open', function(err, respSire) {
-      var bodySale = JSON.parse(respSale.body);
-      var bodySire = JSON.parse(respSire.body);
 
-      var sale = bodySale.auctions.sort(function(a, b) {
+      var saleAuctions = JSON.parse(respSale.body).auctions.map(function(cat) {
+        var timeNow = moment();
+        var catEndTime = moment(new Date(parseInt(cat.end_time, 10)))
+        cat.time_until_end = catEndTime.fromNow();
+
+        var endingWithin5Minutes = catEndTime.diff(timeNow, 'minutes') <= 5;
+
+        if (endingWithin5Minutes) {
+          cat.ending_soon = true;
+        }
+
+        return cat;
+      });
+
+      var sireAuctions = JSON.parse(respSire.body).auctions.map(function(cat) {
+        var timeNow = moment();
+        var catEndTime = moment(new Date(parseInt(cat.end_time, 10)))
+        cat.time_until_end = catEndTime.fromNow();
+
+        var endingWithin5Minutes = catEndTime.diff(timeNow, 'minutes');
+
+        if (endingWithin5Minutes <= 5) {
+          cat.ending_soon = true;
+        }
+
+        return cat;
+      });
+
+      var saleLeast = saleAuctions.sort(function(a, b) {
         return a.current_price - b.current_price;
       }).slice(0, 10);
 
-      var saleEndPrice = bodySale.auctions.sort(function(a, b) {
+      var saleMost = saleAuctions.sort(function(b, a) {
+        return a.current_price - b.current_price;
+      }).slice(0, 10);
+
+      var saleEndPrice = saleAuctions.sort(function(a, b) {
         return a.end_price - b.end_price;
       }).slice(0, 10);
 
-      var sire = bodySire.auctions.sort(function(a, b) {
+      var sireLeast = sireAuctions.sort(function(a, b) {
         return a.current_price - b.current_price;
+      }).slice(0, 10);
+
+      var sireMost = sireAuctions.sort(function(b, a) {
+        return a.current_price - b.current_price;
+      }).slice(0, 10);
+
+      var endTime = sireAuctions.sort(function(a, b) {
+        return a.end_time - b.end_time;
       }).slice(0, 10);
 
       res.render('index', {
         ethPrice: ethPrice,
-        firstSale: sale[0],
-        firstSire: sire[0],
+        endTime: endTime,
         lastUpdate: new Date(),
-        sale: sale,
+        saleLeast: saleLeast,
+        saleMost: saleMost,
         saleEndPrice: saleEndPrice,
-        sire: sire,
+        sireLeast: sireLeast,
+        sireMost: sireMost,
         title: 'Top 10s'
       });
     });

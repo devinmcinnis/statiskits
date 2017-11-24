@@ -3,12 +3,20 @@ body {
   margin: 0 5px;
 }
 
+h2 {
+  margin-bottom: 0;
+}
+
 a {
   color: #00B7FF;
 }
 
 img {
   max-width: 100%;
+}
+
+.text-danger {
+  color: red;
 }
 
 .nav {
@@ -47,6 +55,10 @@ img {
 
 .content {
   padding: 20px 15px 20px 5px;
+}
+
+.section {
+  margin-bottom: 50px;
 }
 
 .kitties {

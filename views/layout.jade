@@ -14,8 +14,10 @@ html
         a(href='/sire') View all Sires
 
       .nav-section
-        span Last update #{lastUpdate.toLocaleTimeString()}
-        span.eth-price ETH$#{ethPrice.toFixed(2)}
+        if ethPrice
+          span.eth-price ETH$
+            = ethPrice.toFixed(2)
+        //- span Last update #{lastUpdate.toLocaleTimeString()}
 
     .content
       block content
