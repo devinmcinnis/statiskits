@@ -70,3 +70,13 @@ img {
   width: 10%;
   text-align: center;
 }
+
+.kitty img {
+  transition: all .05s ease-in-out;
+}
+
+.kitty img:hover {
+  position: relative;
+  z-index: 10;
+  transform: scale(1.6);
+}
