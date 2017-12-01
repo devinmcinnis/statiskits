@@ -4,7 +4,7 @@ mixin kitty(kitty)
   - var kittyPrice = parseInt(kitty.current_price, 10) / 1000000000000000000
 
   .kitty
-    a(target="_blank" href='https://private.cryptokitties.co/kitty/' + kitty.kitty.id)
+    a(target="_blank" href='https://cryptokitties.co/kitty/' + kitty.kitty.id)
       img(src=kitty.kitty.image_url)
     div= '#' + kitty.kitty.id
     div ETH
