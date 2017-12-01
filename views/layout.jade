@@ -15,8 +15,9 @@ html
 
       .nav-section
         if ethPrice
-          span.eth-price ETH$
+          span.eth-price ETH $
             = ethPrice.toFixed(2)
+            = ' USD'
         //- span Last update #{lastUpdate.toLocaleTimeString()}
 
     .content
