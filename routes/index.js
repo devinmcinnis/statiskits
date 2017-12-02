@@ -3,34 +3,6 @@ var router = express.Router();
 var request = require('request');
 var moment = require('moment');
 
-function attachTimeUntilEnd(cat) {
-  var timeNow = moment();
-  var catEndTime = moment(new Date(parseInt(cat.end_time, 10)))
-  cat.time_until_end = catEndTime.fromNow();
-
-  var endingWithin5Minutes = catEndTime.diff(timeNow, 'minutes') <= 30;
-
-  if (endingWithin5Minutes) {
-    cat.ending_soon = true;
-  }
-
-  return cat;
-}
-
-function attachTimeUntilEndKitty(kitty) {
-  var timeNow = moment();
-  var catEndTime = moment(new Date(parseInt(kitty.auction.end_time, 10)))
-  kitty.time_until_end = catEndTime.fromNow();
-
-  var endingWithin5Minutes = catEndTime.diff(timeNow, 'minutes') <= 30;
-
-  if (endingWithin5Minutes) {
-    kitty.ending_soon = true;
-  }
-
-  return kitty;
-}
-
 function getEthPrice() {
   request('https://api.coinmarketcap.com/v1/ticker/ethereum/', function (err, resp) {
     ethPrice = parseInt(JSON.parse(resp.body)[0].price_usd, 10);
@@ -50,10 +22,10 @@ router.get('/', function (req, res, next) {
       request('https://api.cryptokitties.co/auctions?offset=&limit=10&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (err, respSireCheap) {
         request('https://api.cryptokitties.co/auctions?offset=&limit=20&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=desc', function (err, respSireExpensive) {
 
-          var saleLeast = JSON.parse(respSaleCheap.body).auctions.map(attachTimeUntilEnd);
-          var saleMost = JSON.parse(respSaleExpensive.body).auctions.map(attachTimeUntilEnd);
-          var sireLeast = JSON.parse(respSireCheap.body).auctions.map(attachTimeUntilEnd);
-          var sireMost = JSON.parse(respSireExpensive.body).auctions.map(attachTimeUntilEnd);
+          var saleLeast = JSON.parse(respSaleCheap.body).auctions;
+          var saleMost = JSON.parse(respSaleExpensive.body).auctions;
+          var sireLeast = JSON.parse(respSireCheap.body).auctions;
+          var sireMost = JSON.parse(respSireExpensive.body).auctions;
 
           var genesisKitty = saleMost.find(function(catObj) {
             return catObj.kitty.id === 1;
@@ -67,21 +39,10 @@ router.get('/', function (req, res, next) {
             return parseInt(catObj.current_price, 10) <= 10000000000000000000; // 10ETH
           }).slice(0, 10);
 
-          // var saleEndSoon = saleLeast.sort(function(a, b) {
-          //   return a.end_time - b.end_time;
-          // }).slice(0, 10);
-
-          // var sireEndSoon = sireAuctions.sort(function(a, b) {
-          //   return a.end_time - b.end_time;
-          // }).slice(0, 10);
-
           res.render('index', {
             ethPrice: ethPrice,
-            lastUpdate: new Date(),
-            // saleEndSoon: saleEndSoon,
             saleLeast: saleLeast,
             saleMost: saleMost,
-            // sireEndSoon: sireEndSoon,
             sireLeast: sireLeast,
             sireMost: sireMost,
             title: 'Top 10s'
@@ -97,11 +58,10 @@ router.get('/sale', function (req, res, next) {
 
   request('https://api.cryptokitties.co/auctions?offset=&limit=5000&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (err, respSale) {
 
-    var sale = JSON.parse(respSale.body).auctions.map(attachTimeUntilEnd);
+    var sale = JSON.parse(respSale.body).auctions;
 
     res.render('all', {
       ethPrice: ethPrice,
-      lastUpdate: new Date(),
       kitties: sale,
       title: 'For Sale'
     });
@@ -114,11 +74,10 @@ router.get('/sire', function (req, res, next) {
 
   request('https://api.cryptokitties.co/auctions?offset=&limit=5000&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (err, respSire) {
 
-    var sire = JSON.parse(respSire.body).auctions.map(attachTimeUntilEnd);
+    var sire = JSON.parse(respSire.body).auctions;
 
     res.render('all', {
       ethPrice: ethPrice,
-      lastUpdate: new Date(),
       kitties: sire,
       title: 'For Sire'
     });
@@ -127,20 +86,29 @@ router.get('/sire', function (req, res, next) {
 });
 
 // clock cats
-//
+function formatClockCat(kitty) {
+  return {
+    current_price: kitty.auction.current_price,
+    kitty: {
+      generation: kitty.generation,
+      id: kitty.id,
+      image_url: kitty.image_url
+    }
+  };
+}
+
 router.get('/clock', function (req, res, next) {
     request('https://api.cryptokitties.co/kitties?offset=0&limit=1000&owner_wallet_address=0x06012c8cf97bead5deae237070f9587f8e7a266d&sorting=cheap&orderBy=current_price&orderDirection=asc', function (err, respClock) {
-  
-      var clock = JSON.parse(respClock.body).kitties.map(attachTimeUntilEndKitty);
-  
-      res.render('account', {
+
+      var clock = JSON.parse(respClock.body).kitties.map(formatClockCat);
+
+      res.render('all', {
         ethPrice: ethPrice,
-        lastUpdate: new Date(),
         kitties: clock,
-        title: 'For Sale (Clock)'
+        title: 'Clock Cats'
       });
     });
-  
+
   });
 
 module.exports = router;
