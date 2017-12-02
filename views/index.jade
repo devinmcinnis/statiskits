@@ -4,7 +4,7 @@ mixin kitty(kitty)
   - var kittyPrice = parseInt(kitty.current_price, 10) / 1000000000000000000
 
   .kitty
-    a(target="_blank" href='https://cryptokitties.co/kitty/' + kitty.kitty.id)
+    a(target="_blank" href='https://www.cryptokitties.co/kitty/' + kitty.kitty.id)
       img(src=kitty.kitty.image_url)
     div= '#' + kitty.kitty.id
     div ETH
@@ -12,8 +12,23 @@ mixin kitty(kitty)
       span= kittyPrice.toFixed(4)
     div Price $#{(kittyPrice * ethPrice).toFixed(2)}
     div(class="#{kitty.ending_soon ? 'text-danger' : ''}") Ends #{kitty.time_until_end}
+    div Gen #{kitty.kitty.generation}
 
 block content
+
+  .section
+    h2 Least Expensive for Sale
+
+    .kitties
+      each kitty in saleLeast
+        +kitty(kitty)
+  
+  .section
+    h2 Least Expensive to Sire
+
+    .kitties
+      each kitty in sireLeast
+        +kitty(kitty)
 
   .section
     h2 Most Expensive for Sale
@@ -23,36 +38,22 @@ block content
         +kitty(kitty)
 
   .section
-    h2 Least Expensive for Sale
-
-    .kitties
-      each kitty in saleLeast
-        +kitty(kitty)
-
-  .section
     h2 Most Expensive to Sire
 
     .kitties
       each kitty in sireMost
         +kitty(kitty)
 
-  .section
-    h2 Least Expensive to Sire
+  //- .section
+  //-   h2 Sales About to End
 
-    .kitties
-      each kitty in sireLeast
-        +kitty(kitty)
+  //-   .kitties
+  //-     each kitty in saleEndSoon
+  //-       +kitty(kitty)
 
-  .section
-    h2 Sales About to End
+  //- .section
+  //-   h2 Sires About to End
 
-    .kitties
-      each kitty in saleEndSoon
-        +kitty(kitty)
-
-  .section
-    h2 Sires About to End
-
-    .kitties
-      each kitty in sireEndSoon
-        +kitty(kitty)
+  //-   .kitties
+  //-     each kitty in sireEndSoon
+  //-       +kitty(kitty)
