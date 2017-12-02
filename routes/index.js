@@ -17,6 +17,20 @@ function attachTimeUntilEnd(cat) {
   return cat;
 }
 
+function attachTimeUntilEndKitty(kitty) {
+  var timeNow = moment();
+  var catEndTime = moment(new Date(parseInt(kitty.auction.end_time, 10)))
+  kitty.time_until_end = catEndTime.fromNow();
+
+  var endingWithin5Minutes = catEndTime.diff(timeNow, 'minutes') <= 30;
+
+  if (endingWithin5Minutes) {
+    kitty.ending_soon = true;
+  }
+
+  return kitty;
+}
+
 function getEthPrice() {
   request('https://api.coinmarketcap.com/v1/ticker/ethereum/', function (err, resp) {
     ethPrice = parseInt(JSON.parse(resp.body)[0].price_usd, 10);
@@ -111,5 +125,22 @@ router.get('/sire', function (req, res, next) {
   });
 
 });
+
+// clock cats
+//
+router.get('/clock', function (req, res, next) {
+    request('https://api.cryptokitties.co/kitties?offset=0&limit=1000&owner_wallet_address=0x06012c8cf97bead5deae237070f9587f8e7a266d&sorting=cheap&orderBy=current_price&orderDirection=asc', function (err, respClock) {
+  
+      var clock = JSON.parse(respClock.body).kitties.map(attachTimeUntilEndKitty);
+  
+      res.render('account', {
+        ethPrice: ethPrice,
+        lastUpdate: new Date(),
+        kitties: clock,
+        title: 'For Sale (Clock)'
+      });
+    });
+  
+  });
 
 module.exports = router;
