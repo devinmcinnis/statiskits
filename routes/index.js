@@ -32,14 +32,26 @@ router.get('/', function (req, res, next) {
 
   //https://api.cryptokitties.co/auctions?offset=0&limit=12&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc
   request('https://api.cryptokitties.co/auctions?offset=&limit=10&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (err, respSaleCheap) {
-    request('https://api.cryptokitties.co/auctions?offset=&limit=10&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=desc', function (err, respSaleExpensive) {
+    request('https://api.cryptokitties.co/auctions?offset=&limit=40&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=desc', function (err, respSaleExpensive) {
       request('https://api.cryptokitties.co/auctions?offset=&limit=10&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (err, respSireCheap) {
-        request('https://api.cryptokitties.co/auctions?offset=&limit=10&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=desc', function (err, respSireExpensive) {
+        request('https://api.cryptokitties.co/auctions?offset=&limit=20&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=desc', function (err, respSireExpensive) {
 
           var saleLeast = JSON.parse(respSaleCheap.body).auctions.map(attachTimeUntilEnd);
           var saleMost = JSON.parse(respSaleExpensive.body).auctions.map(attachTimeUntilEnd);
           var sireLeast = JSON.parse(respSireCheap.body).auctions.map(attachTimeUntilEnd);
           var sireMost = JSON.parse(respSireExpensive.body).auctions.map(attachTimeUntilEnd);
+
+          var genesisKitty = saleMost.find(function(catObj) {
+            return catObj.kitty.id === 1;
+          });
+
+          saleMost = saleMost.filter(function(catObj) {
+            return parseInt(catObj.current_price, 10) <= parseInt(genesisKitty.current_price, 10);
+          }).slice(0, 10);
+
+          sireMost = sireMost.filter(function(catObj) {
+            return parseInt(catObj.current_price, 10) <= 10000000000000000000; // 10ETH
+          }).slice(0, 10);
 
           // var saleEndSoon = saleLeast.sort(function(a, b) {
           //   return a.end_time - b.end_time;
@@ -52,10 +64,10 @@ router.get('/', function (req, res, next) {
           res.render('index', {
             ethPrice: ethPrice,
             lastUpdate: new Date(),
-           // saleEndSoon: saleEndSoon,
+            // saleEndSoon: saleEndSoon,
             saleLeast: saleLeast,
             saleMost: saleMost,
-          //  sireEndSoon: sireEndSoon,
+            // sireEndSoon: sireEndSoon,
             sireLeast: sireLeast,
             sireMost: sireMost,
             title: 'Top 10s'
@@ -66,7 +78,7 @@ router.get('/', function (req, res, next) {
   });
 });
 
-/* GET home page. */
+
 router.get('/sale', function (req, res, next) {
 
   request('https://api.cryptokitties.co/auctions?offset=&limit=5000&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (err, respSale) {
@@ -83,7 +95,7 @@ router.get('/sale', function (req, res, next) {
 
 });
 
-/* GET home page. */
+
 router.get('/sire', function (req, res, next) {
 
   request('https://api.cryptokitties.co/auctions?offset=&limit=5000&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (err, respSire) {

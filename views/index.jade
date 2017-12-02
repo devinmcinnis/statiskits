@@ -20,40 +20,46 @@ block content
     h2 Least Expensive for Sale
 
     .kitties
-      each kitty in saleLeast
-        +kitty(kitty)
-  
+      .kitties-content
+        each kitty in saleLeast
+          +kitty(kitty)
+
   .section
     h2 Least Expensive to Sire
 
     .kitties
-      each kitty in sireLeast
-        +kitty(kitty)
+      .kitties-content
+        each kitty in sireLeast
+          +kitty(kitty)
 
   .section
     h2 Most Expensive for Sale
 
     .kitties
-      each kitty in saleMost
-        +kitty(kitty)
+      .kitties-content
+        each kitty in saleMost
+          +kitty(kitty)
 
   .section
     h2 Most Expensive to Sire
 
     .kitties
-      each kitty in sireMost
-        +kitty(kitty)
+      .kitties-content
+        each kitty in sireMost
+          +kitty(kitty)
 
   //- .section
   //-   h2 Sales About to End
 
   //-   .kitties
-  //-     each kitty in saleEndSoon
-  //-       +kitty(kitty)
+  .kitties-content
+    //-     each kitty in saleEndSoon
+    //-       +kitty(kitty)
 
   //- .section
   //-   h2 Sires About to End
 
   //-   .kitties
-  //-     each kitty in sireEndSoon
-  //-       +kitty(kitty)
+  .kitties-content
+    //-     each kitty in sireEndSoon
+    //-       +kitty(kitty)
