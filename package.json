@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon --inspect ./bin/www"
+    "start": "nodemon --inspect ./bin/www & npm run styles:dev",
+    "styles:dev": "./node_modules/stylus/bin/stylus --watch --sourcemap ./public/stylesheets/style.styl --out ./public/stylesheets/",
+    "styles:build": "./node_modules/stylus/bin/stylus ./public/stylesheets/style.styl --out ./public/stylesheets/style.css --compress"
   },
   "dependencies": {
     "body-parser": "~1.17.1",
@@ -15,6 +17,7 @@
     "morgan": "~1.8.1",
     "nodemon": "^1.12.1",
     "request": "^2.83.0",
-    "serve-favicon": "~2.4.2"
+    "serve-favicon": "~2.4.2",
+    "stylus": "^0.54.5"
   }
 }

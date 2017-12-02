@@ -2,18 +2,28 @@ doctype html
 html
   head
     title= title
+    meta(name='viewport' content='width=device-width, initial-scale=1')
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
     div.nav
-      .nav-section
+      .nav-section.nav-section--left
         span.nav-title= title
-        a(href='/') Top 10s
-        = ' '
-        a(href='/sale') View all Sales
-        = ' '
-        a(href='/sire') View all Sires
 
-      .nav-section
+      .nav-section.nav-section--middle
+        .nav-section-inner
+          a(href='/') Top 10s
+          = ' '
+          a(href='/sale') View all Sales
+          = ' '
+          a(href='/sire') View all Sires
+          = ' '
+          a(href='https://kittysales.herokuapp.com' target='_blank') Recent Sales
+
+        .nav-section-inner
+          a.contribute(href='https://github.com/devinmcinnis/statiskits' target='_blank')
+            | Contribute
+
+      .nav-section.nav-section--right
         if ethPrice
           span.eth-price ETH $
             = ethPrice.toFixed(2)
