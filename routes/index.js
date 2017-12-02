@@ -27,14 +27,9 @@ router.get('/', function (req, res, next) {
           var sireLeast = JSON.parse(respSireCheap.body).auctions;
           var sireMost = JSON.parse(respSireExpensive.body).auctions;
 
-          // var genesisKitty = saleMost.find(function(catObj) {
-          //   return catObj.kitty.id === 1;
-          // });
-
           saleMost = saleMost.filter(function(catObj) {
-           // return parseInt(catObj.current_price, 10) <= parseInt(genesisKitty.current_price, 10);
-           return parseInt(catObj.current_price, 10) <= 3000000000000000000000; // 10ETH
-           
+           return parseInt(catObj.current_price, 10) <= 50000000000000000000; // 50ETH
+
           }).slice(0, 10);
 
           sireMost = sireMost.filter(function(catObj) {
