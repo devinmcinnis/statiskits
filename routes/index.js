@@ -34,7 +34,7 @@ router.get('/', function (req, res, next) {
           saleMost = saleMost.filter(function(catObj) {
            // return parseInt(catObj.current_price, 10) <= parseInt(genesisKitty.current_price, 10);
            return parseInt(catObj.current_price, 10) <= 3000000000000000000000; // 10ETH
-           
+
           }).slice(0, 10);
 
           sireMost = sireMost.filter(function(catObj) {
@@ -57,18 +57,10 @@ router.get('/', function (req, res, next) {
 
 
 router.get('/sale', function (req, res, next) {
-  var offset = req.query.offset;
-  if (!offset) {
-    offset = ''
-  }
-  var search = req.query.search
-  if (!search) {
-    search = ''
-  } else {
-    search = '&search=' + search
-  }
-  
-  request(`https://api.cryptokitties.co/auctions?offset=${offset}${search}&limit=5000&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (err, respSale) {
+  var offset = req.query.offset || '';
+  var search = req.query.search || '';
+
+  request(`https://api.cryptokitties.co/auctions?offset=${offset}&search=${search}&limit=5000&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (err, respSale) {
 
     var sale = JSON.parse(respSale.body).auctions;
 
@@ -83,19 +75,10 @@ router.get('/sale', function (req, res, next) {
 
 
 router.get('/sire', function (req, res, next) {
+  var offset = req.query.offset || '';
+  var search = req.query.search || '';
 
-  var offset = req.query.offset;
-  if (!offset) {
-    offset = ''
-  }
-  var search = req.query.search
-  if (!search) {
-    search = ''
-  } else {
-    search = '&search=' + search
-  }
-
-  request(`https://api.cryptokitties.co/auctions?offset=${offset}${search}&limit=5000&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (err, respSire) {
+  request(`https://api.cryptokitties.co/auctions?offset=${offset}&search=${search}&limit=5000&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (err, respSire) {
 
     var sire = JSON.parse(respSire.body).auctions;
 
