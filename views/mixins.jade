@@ -7,6 +7,6 @@ mixin kitty(kitty)
     div= '#' + kitty.kitty.id
     div ETH
       = ' '
-      span= kittyPrice.toFixed(4)
+      span= parseFloat(kittyPrice.toFixed(4))
     div Price $#{(kittyPrice * ethPrice).toFixed(2)}
     div Gen #{kitty.kitty.generation}
