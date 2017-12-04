@@ -61,8 +61,14 @@ router.get('/sale', function (req, res, next) {
   if (!offset) {
     offset = ''
   }
+  var search = req.query.search
+  if (!search) {
+    search = ''
+  } else {
+    search = '&search=' + search
+  }
   
-  request(`https://api.cryptokitties.co/auctions?offset=${offset}&limit=5000&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (err, respSale) {
+  request(`https://api.cryptokitties.co/auctions?offset=${offset}${search}&limit=5000&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (err, respSale) {
 
     var sale = JSON.parse(respSale.body).auctions;
 
@@ -82,8 +88,14 @@ router.get('/sire', function (req, res, next) {
   if (!offset) {
     offset = ''
   }
+  var search = req.query.search
+  if (!search) {
+    search = ''
+  } else {
+    search = '&search=' + search
+  }
 
-  request(`https://api.cryptokitties.co/auctions?offset=${offset}&limit=5000&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (err, respSire) {
+  request(`https://api.cryptokitties.co/auctions?offset=${offset}${search}&limit=5000&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (err, respSire) {
 
     var sire = JSON.parse(respSire.body).auctions;
 
