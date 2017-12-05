@@ -40,13 +40,13 @@ router.get('/', function (req, res, next) {
           var sireLeast = [];
 
           if (respSireCheap.statusCode === 200) {
-            saleMost = JSON.parse(respSireCheap.body).auctions;
+            sireLeast = JSON.parse(respSireCheap.body).auctions;
           }
 
           var sireMost = [];
 
           if (respSireExpensive.statusCode === 200) {
-            saleMost = JSON.parse(respSireExpensive.body).auctions;
+            sireMost = JSON.parse(respSireExpensive.body).auctions;
           }
 
           saleMost = saleMost.filter(function(catObj) {
