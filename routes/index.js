@@ -88,7 +88,7 @@ router.get('/sale/:page?', function (req, res, next) {
       parsedResp = JSON.parse(respSale.body);
     }
 
-    var totalOverLimit = parsedResp.total > offset;
+    var totalOverLimit = parsedResp.total > offset + API_LIMIT;
     var sale = parsedResp.auctions;
 
     res.render('all', {
@@ -120,7 +120,7 @@ router.get('/sire/:page?', function (req, res, next) {
       parsedResp = JSON.parse(respSire.body);
     }
 
-    var totalOverLimit = parsedResp.total > offset;
+    var totalOverLimit = parsedResp.total > offset + API_LIMIT;
     var sire = parsedResp.auctions;
 
     res.render('all', {
@@ -166,7 +166,7 @@ router.get('/clock/:pageId?', function (req, res, next) {
       parsedResp = JSON.parse(respClock.body);
     }
 
-    var totalOverLimit = parsedResp.total > offset;
+    var totalOverLimit = parsedResp.total > offset + API_LIMIT;
     var clock = parsedResp.kitties && parsedResp.kitties.map(formatClockCat);
 
     res.render('all', {
