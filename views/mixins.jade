@@ -45,3 +45,16 @@ mixin cooldown(index)
       span Catatonic
     default
       span Unknown
+
+mixin pageNav(page, nextPage, prevPage)
+  if page && (nextPage || prevPage)
+    div.page-nav
+      if prevPage === 0
+        a.Button(href='/#{page}') Prev Page
+      else if prevPage
+        a.Button(href='/#{page}/#{prevPage}') Prev Page
+      else
+        span
+
+      if nextPage
+        a.Button(href='/#{page}/#{nextPage}') Next Page
