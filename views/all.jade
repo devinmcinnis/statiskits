@@ -1,7 +1,11 @@
 extends layout
 
 block content
+  +pageNav(pageType, nextPage, prevPage)
+
   .kitties.kitties--no-overflow
     .kitties-content
       each kitty in kitties
         +kitty(kitty)
+
+  +pageNav(pageType, nextPage, prevPage)
