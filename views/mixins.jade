@@ -10,3 +10,38 @@ mixin kitty(kitty)
       span= parseFloat(kittyPrice.toFixed(4))
     div Price $#{(kittyPrice * ethPrice).toFixed(2)}
     div Gen #{kitty.kitty.generation}
+      = ', '
+      +cooldown(kitty.kitty.status.cooldown_index)
+
+mixin cooldown(index)
+  case index
+    when 0
+      span Fast
+    when 1
+      span Swift
+    when 2
+      span Swift
+    when 3
+      span Snappy
+    when 4
+      span Snappy
+    when 5
+      span Brisk
+    when 6
+      span Brisk
+    when 7
+      span Plodding
+    when 8
+      span Plodding
+    when 9
+      span Slow
+    when 10
+      span Slow
+    when 11
+      span Sluggish
+    when 12
+      span Sluggish
+    when 13
+      span Catatonic
+    default
+      span Unknown

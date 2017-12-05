@@ -5,13 +5,15 @@ var moment = require('moment');
 
 function getEthPrice() {
   request('https://api.coinmarketcap.com/v1/ticker/ethereum/', function (err, resp) {
-    ethPrice = parseInt(JSON.parse(resp.body)[0].price_usd, 10);
+    ethPrice = parseFloat(JSON.parse(resp.body)[0].price_usd, 10);
   });
 }
 
 var ethPrice = 0;
 getEthPrice();
 setInterval(getEthPrice, 1000 * 60 * 15); // Every 15 minutes
+
+const oneEth = 1000000000000000000;
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
@@ -20,7 +22,7 @@ router.get('/', function (req, res, next) {
   request('https://api.cryptokitties.co/auctions?offset=&limit=10&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (err, respSaleCheap) {
     request('https://api.cryptokitties.co/auctions?offset=&limit=100&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=desc', function (err, respSaleExpensive) {
       request('https://api.cryptokitties.co/auctions?offset=&limit=10&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (err, respSireCheap) {
-        request('https://api.cryptokitties.co/auctions?offset=&limit=20&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=desc', function (err, respSireExpensive) {
+        request('https://api.cryptokitties.co/auctions?offset=&limit=50&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=desc', function (err, respSireExpensive) {
 
           var saleLeast = JSON.parse(respSaleCheap.body).auctions;
           var saleMost = JSON.parse(respSaleExpensive.body).auctions;
@@ -28,11 +30,11 @@ router.get('/', function (req, res, next) {
           var sireMost = JSON.parse(respSireExpensive.body).auctions;
 
           saleMost = saleMost.filter(function(catObj) {
-           return parseInt(catObj.current_price, 10) <= 200000000000000000000; // 200ETH
+           return parseInt(catObj.current_price, 10) <= oneEth * 495;
           }).slice(0, 10);
 
           sireMost = sireMost.filter(function(catObj) {
-            return parseInt(catObj.current_price, 10) <= 10000000000000000000; // 10ETH
+            return parseInt(catObj.current_price, 10) <= oneEth * 15;
           }).slice(0, 10);
 
           res.render('index', {
