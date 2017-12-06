@@ -12,6 +12,7 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.3",
     "express": "~4.15.2",
+    "forever": "^0.15.3",
     "jade": "~1.11.0",
     "moment": "^2.19.2",
     "morgan": "~1.8.1",
