@@ -21,9 +21,9 @@ router.get('/', function (req, res, next) {
 
   //https://api.cryptokitties.co/auctions?offset=0&limit=12&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc
   request('https://api.cryptokitties.co/auctions?offset=&limit=10&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (errSaleCheap, respSaleCheap) {
-    request(`https://api.cryptokitties.co/auctions?offset=&limit=${API_LIMIT}&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=desc`, function (errSaleExp, respSaleExpensive) {
+    request(`https://api.cryptokitties.co/auctions?offset=0&limit=20&type=sale&status=open&search=gen:0&sorting=expensive&orderBy=current_price&orderDirection=desc&parents=false`, function (errSaleExp, respSaleExpensive) {
       request('https://api.cryptokitties.co/auctions?offset=&limit=10&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (errSireCheap, respSireCheap) {
-        request('https://api.cryptokitties.co/auctions?offset=&limit=50&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=desc', function (errSireExp, respSireExpensive) {
+        request(`https://api.cryptokitties.co/auctions?offset=0&limit=20&type=sire&status=open&search=gen:0&sorting=expensive&orderBy=current_price&orderDirection=desc&parents=false`, function (errSireExp, respSireExpensive) {
 
           var saleLeast = [];
 
@@ -50,11 +50,11 @@ router.get('/', function (req, res, next) {
           }
 
           saleMost = saleMost.filter(function(catObj) {
-           return parseInt(catObj.current_price, 10) <= oneEth * 495;
+           return parseInt(catObj.current_price, 10) <= oneEth * 2000;
           }).slice(0, 10);
 
           sireMost = sireMost.filter(function(catObj) {
-            return parseInt(catObj.current_price, 10) <= oneEth * 15;
+            return parseInt(catObj.current_price, 10) <= oneEth * 20;
           }).slice(0, 10);
 
           res.render('index', {
@@ -156,7 +156,6 @@ router.get('/clock/:pageId?', function (req, res, next) {
   var isGoodPageNum = paramPage > 0;
   var page = isGoodPageNum ? parseInt(paramPage, 10) : 0;
   var offset = page * API_LIMIT;
-  var search = req.query.search || '';
 
   request(`https://api.cryptokitties.co/kitties?offset=${offset}&limit=${API_LIMIT}&owner_wallet_address=0x06012c8cf97bead5deae237070f9587f8e7a266d&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (errClock, respClock) {
 
