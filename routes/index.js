@@ -3,8 +3,14 @@ var router = express.Router();
 var request = require('request');
 var moment = require('moment');
 
+var cachedRequest = require('cached-request')(request);
+cachedRequest.setCacheDirectory('/tmp/cache');
+cachedRequest.setValue('ttl', 60000); // 1 minute
+
 function getEthPrice() {
-  request('https://api.coinmarketcap.com/v1/ticker/ethereum/', function (err, resp) {
+  cachedRequest({
+    url: 'https://api.coinmarketcap.com/v1/ticker/ethereum/'
+  }, function (err, resp) {
     ethPrice = parseFloat(JSON.parse(resp.body)[0].price_usd, 10);
   });
 }
@@ -14,16 +20,28 @@ getEthPrice();
 setInterval(getEthPrice, 1000 * 60 * 15); // Every 15 minutes
 
 const oneEth = 1000000000000000000;
-const API_LIMIT = 100;
+const API_LIMIT = 20;
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
 
   //https://api.cryptokitties.co/auctions?offset=0&limit=12&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc
-  request('https://api.cryptokitties.co/auctions?offset=&limit=10&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (errSaleCheap, respSaleCheap) {
-    request(`https://api.cryptokitties.co/auctions?offset=0&limit=20&type=sale&status=open&search=gen:0&sorting=expensive&orderBy=current_price&orderDirection=desc&parents=false`, function (errSaleExp, respSaleExpensive) {
-      request('https://api.cryptokitties.co/auctions?offset=&limit=10&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc', function (errSireCheap, respSireCheap) {
-        request(`https://api.cryptokitties.co/auctions?offset=0&limit=20&type=sire&status=open&search=gen:0&sorting=expensive&orderBy=current_price&orderDirection=desc&parents=false`, function (errSireExp, respSireExpensive) {
+  cachedRequest({
+    url: 'https://api.cryptokitties.co/auctions?offset=&limit=10&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc'
+  }, function (errSaleCheap, respSaleCheap) {
+
+    cachedRequest({
+      url: `https://api.cryptokitties.co/auctions?offset=0&limit=20&type=sale&status=open&search=gen:0&sorting=expensive&orderBy=current_price&orderDirection=desc&parents=false`
+    }, function (errSaleExp, respSaleExpensive) {
+
+      cachedRequest({
+        url: 'https://api.cryptokitties.co/auctions?offset=&limit=10&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc'
+      }, function (errSireCheap, respSireCheap) {
+
+        cachedRequest({
+          url: `https://api.cryptokitties.co/auctions?offset=0&limit=20&type=sire&status=open&search=gen:0&sorting=expensive&orderBy=current_price&orderDirection=desc&parents=false`
+        }, function (errSireExp, respSireExpensive) {
+
 
           var saleLeast = [];
 
@@ -80,7 +98,9 @@ router.get('/sale/:page?', function (req, res, next) {
   var offset = page * API_LIMIT;
   var search = req.query.search || '';
 
-  request(`https://api.cryptokitties.co/auctions?offset=${offset}&search=${search}&limit=${API_LIMIT}&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (errSale, respSale) {
+  cachedRequest({
+    url: `https://api.cryptokitties.co/auctions?offset=${offset}&search=${search}&limit=${API_LIMIT}&type=sale&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`
+  }, function (errSale, respSale) {
 
     var parsedResp = {};
 
@@ -88,7 +108,7 @@ router.get('/sale/:page?', function (req, res, next) {
       parsedResp = JSON.parse(respSale.body);
     }
 
-    var totalOverLimit = parsedResp.total > offset + API_LIMIT;
+    var totalOverLimit = parsedResp.total > offset + parsedResp.limit;
     var sale = parsedResp.auctions;
 
     res.render('all', {
@@ -112,7 +132,9 @@ router.get('/sire/:page?', function (req, res, next) {
   var offset = page * API_LIMIT;
   var search = req.query.search || '';
 
-  request(`https://api.cryptokitties.co/auctions?offset=${offset}&search=${search}&limit=${API_LIMIT}&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (errSire, respSire) {
+  cachedRequest({
+    url: `https://api.cryptokitties.co/auctions?offset=${offset}&search=${search}&limit=${API_LIMIT}&type=sire&status=open&sorting=cheap&orderBy=current_price&orderDirection=asc`
+  }, function (errSire, respSire) {
 
     var parsedResp = {};
 
@@ -120,7 +142,7 @@ router.get('/sire/:page?', function (req, res, next) {
       parsedResp = JSON.parse(respSire.body);
     }
 
-    var totalOverLimit = parsedResp.total > offset + API_LIMIT;
+    var totalOverLimit = parsedResp.total > offset + parsedResp.limit;
     var sire = parsedResp.auctions;
 
     res.render('all', {
@@ -157,7 +179,9 @@ router.get('/clock/:pageId?', function (req, res, next) {
   var page = isGoodPageNum ? parseInt(paramPage, 10) : 0;
   var offset = page * API_LIMIT;
 
-  request(`https://api.cryptokitties.co/kitties?offset=${offset}&limit=${API_LIMIT}&owner_wallet_address=0x06012c8cf97bead5deae237070f9587f8e7a266d&sorting=cheap&orderBy=current_price&orderDirection=asc`, function (errClock, respClock) {
+  cachedRequest({
+    url: `https://api.cryptokitties.co/kitties?offset=${offset}&limit=${API_LIMIT}&owner_wallet_address=0x06012c8cf97bead5deae237070f9587f8e7a266d&sorting=cheap&orderBy=current_price&orderDirection=asc`
+  }, function (errClock, respClock) {
 
     var parsedResp = {};
 
@@ -165,7 +189,7 @@ router.get('/clock/:pageId?', function (req, res, next) {
       parsedResp = JSON.parse(respClock.body);
     }
 
-    var totalOverLimit = parsedResp.total > offset + API_LIMIT;
+    var totalOverLimit = parsedResp.total > offset + parsedResp.limit;
     var clock = parsedResp.kitties && parsedResp.kitties.map(formatClockCat);
 
     res.render('all', {
